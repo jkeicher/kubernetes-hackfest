@@ -37,7 +37,7 @@ jobs:
         # Specify the script here
         inlineScript: |
           
-          az acr build -t hackfest/data-api:$IMAGETAG -r ${{ env.REGISTRY_NAME }} --no-logs ./app/data-api
+          az acr build -t hackfest/data-api:${{ env.IMAGETAG }} -r ${{ env.REGISTRY_NAME }} --no-logs ./app/data-api
 
        
 
