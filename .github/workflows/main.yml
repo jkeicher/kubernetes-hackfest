@@ -35,13 +35,9 @@ jobs:
       uses: Azure/cli@v1.0.0
       with:
         # Specify the script here
-        inlineScript: 
+        inlineScript: |
           
           az acr build -t hackfest/data-api:$IMAGETAG -r ${{ env.REGISTRY_NAME }} --no-logs ./app/data-api
-          az acr build -t hackfest/flights-api:$IMAGETAG -r ${{ env.REGISTRY_NAME }} --no-logs ./app/flights-api
-          az acr build -t hackfest/quakes-api:$IMAGETAG -r ${{ env.REGISTRY_NAME }} --no-logs ./app/quakes-api
-          az acr build -t hackfest/weather-api:$IMAGETAG -r ${{ env.REGISTRY_NAME }} --no-logs ./app/weather-api
-          az acr build -t hackfest/service-tracker-ui:$IMAGETAG -r ${{ env.REGISTRY_NAME }} --no-logs ./app/service-tracker-ui 
 
        
 
