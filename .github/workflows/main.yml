@@ -13,10 +13,11 @@ on: [push]
 
 # Environment variables available to all jobs and steps in this workflow
 env:
-  REGISTRY_NAME: my-registry-name
-  CLUSTER_NAME: my-cluster-name
-  CLUSTER_RESOURCE_GROUP: my-cluster-resource-group
-  NAMESPACE: default
+  REGISTRY_NAME: acrhackfestjpk13013
+  CLUSTER_NAME: aksjpk13013
+  CLUSTER_RESOURCE_GROUP: aks-rg-jpk13013
+  NAMESPACE: hackfest
+  IMAGETAG: githubbuild-${{github.run_id}}
 
 jobs:
   build:
@@ -24,57 +25,25 @@ jobs:
     steps:
     - uses: actions/checkout@master
     
-    # Connect to Azure Container registry (ACR)
-    - uses: azure/docker-login@v1
+    - name: Azure Login
+      uses: Azure/login@v1
       with:
-        login-server: ${{ env.REGISTRY_NAME }}.azurecr.io
-        username: ${{ secrets.REGISTRY_USERNAME }} 
-        password: ${{ secrets.REGISTRY_PASSWORD }}
-    
-    # Container build and push to a Azure Container registry (ACR)
-    - run: |
-        docker build . -t ${{ env.REGISTRY_NAME }}.azurecr.io/myimage:${{ github.sha }}
-        docker push ${{ env.REGISTRY_NAME }}.azurecr.io/myimage:${{ github.sha }}
-    
-    # Set the target Azure Kubernetes Service (AKS) cluster. 
-    - uses: azure/aks-set-context@v1
-      with:
+         # Paste output of `az ad sp create-for-rbac` as value of secret variable: AZURE_CREDENTIALS
         creds: '${{ secrets.AZURE_CREDENTIALS }}'
-        cluster-name: ${{ env.CLUSTER_NAME }}
-        resource-group: ${{ env.CLUSTER_RESOURCE_GROUP }}
     
-    # Create namespace if doesn't exist
-    - run: |
-        kubectl create namespace ${{ env.NAMESPACE }} --dry-run -o json | kubectl apply -f -
-    
-    # Create imagepullsecret for Azure Container registry (ACR)
-    - uses: azure/k8s-create-secret@v1
+    - name: Azure CLI Action
+      uses: Azure/cli@v1.0.0
       with:
-        container-registry-url: ${{ env.REGISTRY_NAME }}.azurecr.io
-        container-registry-username: ${{ secrets.REGISTRY_USERNAME }}
-        container-registry-password: ${{ secrets.REGISTRY_PASSWORD }}
-        secret-name: ${{ env.REGISTRY_NAME }}-registry-connection
-        namespace: ${{ env.NAMESPACE }}
+        # Specify the script here
+        inlineScript: 
+          
+          az acr build -t hackfest/data-api:$IMAGETAG -r ${{ env.REGISTRY_NAME }} --no-logs ./app/data-api
+          az acr build -t hackfest/flights-api:$IMAGETAG -r ${{ env.REGISTRY_NAME }} --no-logs ./app/flights-api
+          az acr build -t hackfest/quakes-api:$IMAGETAG -r ${{ env.REGISTRY_NAME }} --no-logs ./app/quakes-api
+          az acr build -t hackfest/weather-api:$IMAGETAG -r ${{ env.REGISTRY_NAME }} --no-logs ./app/weather-api
+          az acr build -t hackfest/service-tracker-ui:$IMAGETAG -r ${{ env.REGISTRY_NAME }} --no-logs ./app/service-tracker-ui 
 
-    # Baking the helm chart to generate the manifests to deploy
-    - uses: azure/k8s-bake@v1
-      with:
-        renderEngine: 'helm2'
-        helmChart: './my-helm-chart/' 
-        helm-version: 'latest' 
-      id: bake
-
-    # Deploy app to AKS
-    - uses: azure/k8s-deploy@v1
-      with:
-        manifests: ${{ steps.bake.outputs.manifestsBundle }}
-        images: |
-          ${{ env.REGISTRY_NAME }}.azurecr.io/myimage:${{ github.sha }}
-        imagepullsecrets: |
-          ${{ env.REGISTRY_NAME }}-registry-connection
-        namespace: ${{ env.NAMESPACE }}
-    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-    - uses: actions/checkout@v2
+       
 
     # Runs a single command using the runners shell
     - name: Run a one-line script
