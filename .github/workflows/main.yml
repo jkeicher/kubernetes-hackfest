@@ -31,23 +31,24 @@ jobs:
          # Paste output of `az ad sp create-for-rbac` as value of secret variable: AZURE_CREDENTIALS
         creds: '${{ secrets.AZURE_CREDENTIALS }}'
     
-    - name: Build ACR images
-      uses: Azure/cli@v1.0.0
-      with:
-        # Specify the script here
-        inlineScript: |
+#     - name: Build ACR images
+#       uses: Azure/cli@v1.0.0
+#       with:
+#         # Specify the script here
+#         inlineScript: |
           
-          az acr build -t hackfest/data-api:${{ env.IMAGETAG }} -r ${{ env.REGISTRY_NAME }} --no-logs ./app/data-api 
-          az acr build -t hackfest/flights-api:${{ env.IMAGETAG }} -r ${{ env.REGISTRY_NAME }} --no-logs ./app/flights-api
-          az acr build -t hackfest/quakes-api:${{ env.IMAGETAG }} -r ${{ env.REGISTRY_NAME }} --no-logs ./app/quakes-api
-          az acr build -t hackfest/weather-api:${{ env.IMAGETAG }} -r ${{ env.REGISTRY_NAME }} --no-logs ./app/weather-api
-          az acr build -t hackfest/service-tracker-ui:${{ env.IMAGETAG }} -r ${{ env.REGISTRY_NAME }} --no-logs ./app/service-tracker-ui 
+#           az acr build -t hackfest/data-api:${{ env.IMAGETAG }} -r ${{ env.REGISTRY_NAME }} --no-logs ./app/data-api 
+#           az acr build -t hackfest/flights-api:${{ env.IMAGETAG }} -r ${{ env.REGISTRY_NAME }} --no-logs ./app/flights-api
+#           az acr build -t hackfest/quakes-api:${{ env.IMAGETAG }} -r ${{ env.REGISTRY_NAME }} --no-logs ./app/quakes-api
+#           az acr build -t hackfest/weather-api:${{ env.IMAGETAG }} -r ${{ env.REGISTRY_NAME }} --no-logs ./app/weather-api
+#           az acr build -t hackfest/service-tracker-ui:${{ env.IMAGETAG }} -r ${{ env.REGISTRY_NAME }} --no-logs ./app/service-tracker-ui 
 
     - name: Helm tool installer
       uses: Azure/setup-helm@v1
       with:
         # Version of helm
-        version: 3.1.1
+        version: latest
+        
         
     - name: Helm Upgrade
       uses: Azure/cli@v1.0.0
