@@ -51,12 +51,9 @@ jobs:
         
         
     - name: Helm Upgrade
-      uses: Azure/cli@v1.0.0
-      with:
-        # Specify the script here
-        inlineScript: |
+      run: |
 
-          /opt/hostedtoolcache/helm/3.1.1/x64/linux-amd64/helm/helm upgrade --install data-api charts/data-api --namespace hackfest
+          helm upgrade --install data-api charts/data-api --namespace hackfest
           helm upgrade --install quakes-api charts/quakes-api --namespace hackfest
           helm upgrade --install weather-api charts/weather-api --namespace hackfest
           helm upgrade --install flights-api charts/flights-api --namespace hackfest
