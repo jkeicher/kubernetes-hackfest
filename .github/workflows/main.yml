@@ -47,18 +47,18 @@ jobs:
       uses: Azure/setup-helm@v1
       with:
         # Version of helm
-        version: latest
+        version: v3.1.1
         
         
-    - name: Helm Upgrade
-      uses: Azure/cli@v1.0.0
-      with:
-        # Specify the script here
-        inlineScript: |
+#     - name: Helm Upgrade
+#       uses: Azure/cli@v1.0.0
+#       with:
+#         # Specify the script here
+#         inlineScript: |
 
-          helm upgrade --install data-api charts/data-api --namespace hackfest
-          helm upgrade --install quakes-api charts/quakes-api --namespace hackfest
-          helm upgrade --install weather-api charts/weather-api --namespace hackfest
-          helm upgrade --install flights-api charts/flights-api --namespace hackfest
-          helm upgrade --install service-tracker-ui charts/service-tracker-ui --namespace hackfest
+#           helm upgrade --install data-api charts/data-api --namespace hackfest
+#           helm upgrade --install quakes-api charts/quakes-api --namespace hackfest
+#           helm upgrade --install weather-api charts/weather-api --namespace hackfest
+#           helm upgrade --install flights-api charts/flights-api --namespace hackfest
+#           helm upgrade --install service-tracker-ui charts/service-tracker-ui --namespace hackfest
       
