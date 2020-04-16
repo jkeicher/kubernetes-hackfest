@@ -43,11 +43,11 @@ jobs:
 #           az acr build -t hackfest/weather-api:${{ env.IMAGETAG }} -r ${{ env.REGISTRY_NAME }} --no-logs ./app/weather-api
 #           az acr build -t hackfest/service-tracker-ui:${{ env.IMAGETAG }} -r ${{ env.REGISTRY_NAME }} --no-logs ./app/service-tracker-ui 
 
-    - name: Helm tool installer
-      uses: Azure/setup-helm@v1
-      with:
-        # Version of helm
-        version: v3.1.1
+#     - name: Helm tool installer
+#       uses: Azure/setup-helm@v1
+#       with:
+#         # Version of helm
+#         version: v3.1.1
         
         
     - name: Helm Upgrade
