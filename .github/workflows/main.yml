@@ -31,7 +31,7 @@ jobs:
          # Paste output of `az ad sp create-for-rbac` as value of secret variable: AZURE_CREDENTIALS
         creds: '${{ secrets.AZURE_CREDENTIALS }}'
     
-    - name: Azure CLI Action
+    - name: Build ACR images
       uses: Azure/cli@v1.0.0
       with:
         # Specify the script here
@@ -43,14 +43,21 @@ jobs:
           az acr build -t hackfest/weather-api:${{ env.IMAGETAG }} -r ${{ env.REGISTRY_NAME }} --no-logs ./app/weather-api
           az acr build -t hackfest/service-tracker-ui:${{ env.IMAGETAG }} -r ${{ env.REGISTRY_NAME }} --no-logs ./app/service-tracker-ui 
 
+    - name: Helm tool installer
+      uses: Azure/setup-helm@v1
+      with:
+        # Version of helm
+        version: 3.1.1
+        
+    - name: Helm Upgrade
+      uses: Azure/cli@v1.0.0
+      with:
+        # Specify the script here
+        inlineScript: |
 
-
-    # Runs a single command using the runners shell
-    - name: Run a one-line script
-      run: echo Hello, world!
-
-    # Runs a set of commands using the runners shell
-    - name: Run a multi-line script
-      run: |
-        echo Add other actions to build,
-        echo test, and deploy your project.
+          helm upgrade --install data-api charts/data-api --namespace hackfest
+          helm upgrade --install quakes-api charts/quakes-api --namespace hackfest
+          helm upgrade --install weather-api charts/weather-api --namespace hackfest
+          helm upgrade --install flights-api charts/flights-api --namespace hackfest
+          helm upgrade --install service-tracker-ui charts/service-tracker-ui --namespace hackfest
+      
